@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(SpriteRenderer))]
 public class Tile : MonoBehaviour
@@ -25,33 +26,37 @@ public class Tile : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
-    private void OnMouseOver() 
+    private void OnMouseOver()
     {
         if (Time.timeScale == 1)
         {
-            if (active)
+            if (Time.timeScale == 1)
             {
-                if (Input.GetMouseButtonDown(0))
+                if (active)
                 {
-                    ClickedTile();
-                }
-                else if (Input.GetMouseButtonDown(1))
-                {
-                    flagged = !flagged;
-                    if (flagged)
+                    var mouse = Mouse.current;
+                    if (mouse != null)
                     {
-                        spriteRenderer.sprite = flaggedTile;
-                    }
-                    else
-                    {
-                        spriteRenderer.sprite = unclickedTile;
-                    }
-                }
-                else
-                {
-                    if (Input.GetMouseButton(0) && Input.GetMouseButton(1))
-                    {
-                        gameManager.ExpandIfFlagged(this);
+                        if (mouse.leftButton.wasPressedThisFrame)
+                        {
+                            ClickedTile();
+                        }
+                        else if (mouse.rightButton.wasPressedThisFrame)
+                        {
+                            flagged = !flagged;
+                            if (flagged)
+                            {
+                                spriteRenderer.sprite = flaggedTile;
+                            }
+                            else
+                            {
+                                spriteRenderer.sprite = unclickedTile;
+                            }
+                        }
+                        else if (mouse.leftButton.isPressed && mouse.rightButton.isPressed)
+                        {
+                            gameManager.ExpandIfFlagged(this);
+                        }
                     }
                 }
             }
