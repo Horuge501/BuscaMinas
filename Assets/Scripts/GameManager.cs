@@ -18,7 +18,7 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
-        CreateGameBoard(9, 9, 10);
+        CreateGameBoard(10, 10, 10);
         ResetGameState();
     }
 
@@ -39,13 +39,14 @@ public class GameManager : MonoBehaviour
                 tileTransform.localPosition = new Vector2(xIndex * tileSize, yIndex * tileSize);
                 Tile tile = tileTransform.GetComponent<Tile>();
                 tiles.Add(tile);
+                tile.gameManager = this;
             }
         }
     }
 
     private void ResetGameState() 
     {
-        int[] minePositions = Enumerable.Range(0, tiles.Count).OrderBy(x => Random.Range(0, 1)).ToArray();
+        int[] minePositions = Enumerable.Range(0, tiles.Count).OrderBy(x => Random.Range(0f, 1f)).ToArray();
 
         for (int i = 0; i < numberMines; i++) 
         {
@@ -111,5 +112,60 @@ public class GameManager : MonoBehaviour
             }
         }   
         return neighbours;
+    }
+
+    public void ClickNeighbours(Tile tile)
+    {
+        int location = tiles.IndexOf(tile);
+        foreach (int pos in GetNeighbours(location))
+        {
+            tiles[pos].ClickedTile();
+        }
+    }
+
+    public void GameOver()
+    {
+        foreach (Tile tile in tiles)
+        {
+            tile.ShowGameOverState();
+        }
+    }
+
+    public void CheckGameOver()
+    {
+        int count = 0;
+        foreach (Tile tile in tiles)
+        {
+            if (tile.active)
+            {
+                count++;
+            }
+        }
+        if (count == numberMines)
+        {
+            Debug.Log("Win");
+            foreach (Tile tile in tiles)
+            {
+                tile.active = false;
+                tile.SetFlaggedIfMine();
+            }
+        }
+    }
+
+    public void ExpandIfFlagged(Tile tile)
+    {
+        int location = tiles.IndexOf(tile);
+        int flag_count = 0;
+        foreach (int pos in GetNeighbours(location))
+        {
+            if (tiles[pos].flagged)
+            {
+                flag_count++;
+            }
+        }
+        if (flag_count == tile.mineCount)
+        {
+            ClickNeighbours(tile);
+        }
     }
 }

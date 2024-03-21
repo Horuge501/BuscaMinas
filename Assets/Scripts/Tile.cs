@@ -12,6 +12,8 @@ public class Tile : MonoBehaviour
     [SerializeField] private Sprite mineWrongTile;
     [SerializeField] private Sprite mineHitTile;
 
+    public GameManager gameManager;
+
     private SpriteRenderer spriteRenderer;
     public bool flagged = false;
     public bool active = true;
@@ -43,6 +45,13 @@ public class Tile : MonoBehaviour
                     spriteRenderer.sprite = unclickedTile;
                 }
             }
+            else
+            {
+                if (Input.GetMouseButton(0) && Input.GetMouseButton(1))
+                {
+                    gameManager.ExpandIfFlagged(this);
+                }
+            }
         }
     }
 
@@ -54,11 +63,42 @@ public class Tile : MonoBehaviour
             if (isMine) 
             {
                 spriteRenderer.sprite = mineHitTile;
+                gameManager.GameOver();
             }
             else 
             {
                 spriteRenderer.sprite = clickedTiles[mineCount];
+                if (mineCount == 0)
+                {
+                    gameManager.ClickNeighbours(this);
+                }
+                gameManager.CheckGameOver();
             }
+        }
+    }
+
+    public void ShowGameOverState()
+    {
+        if (active)
+        {
+            active = false;
+            if (isMine & !flagged)
+            {
+                spriteRenderer.sprite = mineTile;
+            }
+            else if (flagged & !isMine)
+            {
+                spriteRenderer.sprite = mineWrongTile;
+            }
+        }
+    }
+
+    public void SetFlaggedIfMine()
+    {
+        if (isMine)
+        {
+            flagged = true;
+            spriteRenderer.sprite = flaggedTile;
         }
     }
 }
