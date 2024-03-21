@@ -27,29 +27,32 @@ public class Tile : MonoBehaviour
 
     private void OnMouseOver() 
     {
-        if (active) 
+        if (Time.timeScale == 1)
         {
-            if (Input.GetMouseButtonDown(0)) 
+            if (active)
             {
-                ClickedTile();
-            }
-            else if (Input.GetMouseButtonDown(1)) 
-            {
-                flagged = !flagged;
-                if (flagged) 
+                if (Input.GetMouseButtonDown(0))
                 {
-                    spriteRenderer.sprite = flaggedTile;
+                    ClickedTile();
                 }
-                else 
+                else if (Input.GetMouseButtonDown(1))
                 {
-                    spriteRenderer.sprite = unclickedTile;
+                    flagged = !flagged;
+                    if (flagged)
+                    {
+                        spriteRenderer.sprite = flaggedTile;
+                    }
+                    else
+                    {
+                        spriteRenderer.sprite = unclickedTile;
+                    }
                 }
-            }
-            else
-            {
-                if (Input.GetMouseButton(0) && Input.GetMouseButton(1))
+                else
                 {
-                    gameManager.ExpandIfFlagged(this);
+                    if (Input.GetMouseButton(0) && Input.GetMouseButton(1))
+                    {
+                        gameManager.ExpandIfFlagged(this);
+                    }
                 }
             }
         }

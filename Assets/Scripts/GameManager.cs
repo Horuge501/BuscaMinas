@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -129,6 +130,8 @@ public class GameManager : MonoBehaviour
         {
             tile.ShowGameOverState();
         }
+
+        Invoke("ReloadScene", 5f);
     }
 
     public void CheckGameOver()
@@ -167,5 +170,10 @@ public class GameManager : MonoBehaviour
         {
             ClickNeighbours(tile);
         }
+    }
+
+    public void ReloadScene()
+    {
+        SceneManager.LoadScene("BuscaMinas");
     }
 }
